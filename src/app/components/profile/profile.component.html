@@ -1,0 +1,8 @@
+<span *ngIf="username===''; else logged">
+      <a mat-raised-button [routerLink]="['/login']">Войти</a>
+      <a mat-button [routerLink]="['/register']">Регистрация</a>
+    </span>
+<ng-template #logged>
+  <span>{{username}}</span>
+  <button mat-button (click)="logout()">Выйти</button>
+</ng-template>

@@ -1,0 +1,38 @@
+:host{ /* родитель компонента*/
+  justify-content: center; /* выравнивание по горизонтали*/
+  align-items: center; /*  центр по верт*/
+  /*height: 100%;*/
+  display: flex;
+}
+
+mat-card{
+  margin-top: 10%;
+  max-width: 600px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card-title{
+  text-align: center;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+}
+
+form>*{
+  padding: 7px;
+}
+
+label{
+  text-align: center;
+  padding-top: 20px;
+}
+
