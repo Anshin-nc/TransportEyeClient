@@ -8,7 +8,7 @@ import {AuthService} from '../../services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.less']
 })
 
 export class RegisterComponent implements OnInit {
@@ -38,15 +38,12 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('start register');
     this.submitted = true;
     if (this.regForm.invalid) {
-      console.log(this.regForm.getRawValue());
       return;
     }
     this.authService.register(this.f.username.value, this.f.password.value, this.f.email.value)
       .pipe(catchError((error) => {
-          console.log(error);
           if (error.status === 0) {
             this.message = 'Ошибка подключения';
           } else if (error.status === 400) {
@@ -58,14 +55,6 @@ export class RegisterComponent implements OnInit {
           } else {
             this.message = 'Неизвестная ошибка';
           }
-          //   if (error.error instanceof ErrorEvent) {
-          //   console.log('ErrorEvent: ' + error.error);
-          //   this.message = error.error.message;
-          // } else {
-          //   console.log('other error: ' + error);
-          //   this.message = error.error.error_description;
-          // }
-          console.log(this.message);
           return throwError(this.message);
         })
       ).subscribe(() => {

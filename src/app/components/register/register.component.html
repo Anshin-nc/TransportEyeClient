@@ -10,7 +10,7 @@
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Пароль" formControlName="password" [type]="hide ? 'password' : 'text'">
-        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+        <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                 [attr.aria-pressed]="hide">
           <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
@@ -22,10 +22,10 @@
         <input matInput placeholder="Email" formControlName="email">
         <mat-error *ngIf="f.email.errors">{{getMailError()}}</mat-error>
       </mat-form-field>
-      <mat-label [innerHTML]="message"></mat-label>
       <div class="reg-btn">
         <button mat-raised-button color="primary" type="submit">Готово</button>
       </div>
+      <mat-label [innerHTML]="message"></mat-label>
     </form>
   </mat-card-content>
 </mat-card>

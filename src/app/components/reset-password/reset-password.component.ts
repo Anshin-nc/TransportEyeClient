@@ -8,7 +8,7 @@ import {throwError} from 'rxjs';
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css']
+  styleUrls: ['./reset-password.component.less']
 })
 export class ResetPasswordComponent implements OnInit {
 
@@ -45,7 +45,6 @@ export class ResetPasswordComponent implements OnInit {
 
     this.authService.resetPassword(this.route.snapshot.paramMap.get('uuid'), this.f.password1.value)
       .pipe(catchError((error) => {
-          console.log(error);
           if (error.status === 0) {
             this.message = 'Ошибка подключения';
           } else if (error.status === 400) {
@@ -57,7 +56,6 @@ export class ResetPasswordComponent implements OnInit {
           } else {
             this.message = 'Неизвестная ошибка';
           }
-          console.log(this.message);
           return throwError(this.message);
         })
       ).subscribe(() => {

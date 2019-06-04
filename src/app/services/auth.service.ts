@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {CookieService} from 'ngx-cookie-service';
+import {catchError} from 'rxjs/operators';
+import {throwError} from 'rxjs';
 
 
 const httpOptions = {
@@ -49,7 +51,6 @@ export class AuthService {
   }
 
   public activate(uuid: string) {
-    console.log(uuid);
     return this.http.put(this.activateUrl + uuid, {});
   }
 
@@ -69,26 +70,37 @@ export class AuthService {
 
   public logout() {
     const bbody = new FormData();
-    console.log(this.cookieService.getAll(), this.cookieService.get('access_token'));
     bbody.set('access_token', this.cookieService.get('access_token'));
     bbody.set('refresh_token', this.cookieService.get('refresh_token'));
     this.cookieService.delete('access_token');
     this.cookieService.delete('refresh_token');
-    const opt = {
-      headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'}), body: bbody
-    };
-    return this.http.delete(this.logoutUrl, opt).subscribe((r) => {
-      console.log(r);
+    this.http.request('DELETE', this.logoutUrl, {body: bbody}).pipe(catchError(err => {
+      return throwError(err);
+    })).subscribe(() => {
+      console.log('logout success');
     });
   }
 
-  // todo: interceptor ONLY for expired_token error
-  public refreshToken() {
+  public prepareToken() { // todo: redirect to login or other logic on error catch
+    if (!this.cookieService.check('access_token')) {
+      if (this.cookieService.check('refresh_token')) {
+        const body = new FormData();
+        body.set('refresh_token', this.cookieService.get('refresh_token'));
+        this.http.post<any>(this.authUrl, body, httpOptions)
+          .pipe(catchError(err => {
+            if (err.status === 400 || err.status === 401) {
+              this.cookieService.delete('refresh_token');
+              return throwError('Token expired');
+            }
+          })).subscribe(resp => {
+          this.setCookies(resp);
+        });
+      } else { throwError('Token expired'); }
+    }
   }
 
-  public setCookies(accessToken: string, refreshToken: string) {
-    this.cookieService.set('access_token', accessToken, 30);
-    this.cookieService.set('refresh_token', refreshToken, 30);
-    console.log(this.cookieService.getAll());
+  public setCookies(resp) {
+    this.cookieService.set('access_token', resp.access_token, new Date().getTime() + (1000 * resp.expires_in));
+    this.cookieService.set('refresh_token', resp.refresh_token, new Date().getDate() + 30);
   }
 }

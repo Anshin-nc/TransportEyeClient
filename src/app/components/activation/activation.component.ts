@@ -7,7 +7,7 @@ import {throwError} from 'rxjs';
 @Component({
   selector: 'app-activation',
   templateUrl: './activation.component.html',
-  styleUrls: ['./activation.component.css']
+  styleUrls: ['./activation.component.less']
 })
 export class ActivationComponent implements OnInit {
   message: string;
@@ -21,7 +21,6 @@ export class ActivationComponent implements OnInit {
 
   ngOnInit() {
     this.authService.activate(this.route.snapshot.paramMap.get('uuid')).pipe(catchError((error) => {
-        console.log(error.status);
         this.success = false;
         if (error.status === 0) {
           this.message = 'Ошибка подключения';
@@ -32,16 +31,11 @@ export class ActivationComponent implements OnInit {
         } else {
           this.message = error.error.error_description;
         }
-        console.log(this.message);
         return throwError(this.message);
       })
     ).subscribe(() => {
       this.message = 'Аккаунт был активирован';
       this.success = true;
     });
-  }
-
-  getIconName() {
-    return this.success ? 'mood' : 'mood_bad';
   }
 }

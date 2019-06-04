@@ -10,7 +10,7 @@ import {ComponentsEventsService} from '../../services/components-events.service'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['./login.component.less'],
   providers: [ProfileComponent]
 })
 
@@ -48,7 +48,6 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(this.f.username.value, this.f.password.value)
       .pipe(catchError((error) => {
-          console.log(error.status);
           if (error.status === 0) {
             this.message = 'Ошибка подключения';
           } else if (error.error instanceof ErrorEvent) {
@@ -56,15 +55,11 @@ export class LoginComponent implements OnInit {
           } else {
             this.message = error.error.error_description;
           }
-          console.log(this.message);
           return throwError(this.message);
         })
       ).subscribe(resp => {
-      this.authService.setCookies(resp.access_token, resp.refresh_token);
-      // this.comp.setUsername(this.f.username.value);
-
+      this.authService.setCookies(resp);
       this.service.onLoginEvent.emit(this.f.username.value);
-
       this.router.navigate(['']);
     });
   }
@@ -75,7 +70,6 @@ export class LoginComponent implements OnInit {
       return;
     }
     this.authService.recovery(this.f.username.value).pipe(catchError(error => {
-      console.log(error.status);
       if (error.status === 0) {
         this.message = 'Ошибка подключения';
       } else if (error.status === 400) {
@@ -85,7 +79,6 @@ export class LoginComponent implements OnInit {
       } else {
         this.message = error.error.error_description;
       }
-      console.log(this.message);
       return throwError(this.message);
     })).subscribe(() => {
       this.message = 'Письмо для изменения пароля отправлено на почту';
